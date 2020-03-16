@@ -16,6 +16,7 @@ async function connectUser(userId) {
         userId
     })
     currentUser = await chatManager.connect()
+    console.log(currentUser) // 链接实例
     return currentUser
 }
 
@@ -50,11 +51,30 @@ async function subscribeToRoom(roomId) {
             }
         }
     })
+    console.log(activeRoom)// 当前房间
     setMembers()
     return activeRoom
 }
 
+async function sendMessage(text) {
+    const messageId = await currentUser.sendMessage({
+        text,
+        roomId: activeRoom.id
+    })
+    return messageId
+}
+
+export function isTyping(roomId) {
+    currentUser.isTypingIn({roomId})
+}
+
+function disconnectUser() {
+    currentUser.disconnect()
+}
+
 export default {
     connectUser,
-    subscribeToRoom
+    subscribeToRoom,
+    sendMessage,
+    disconnectUser
 }

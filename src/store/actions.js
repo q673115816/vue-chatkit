@@ -28,7 +28,7 @@ export default {
             await chatkit.subscribeToRoom(activeRoom.id)
             commit('setReconnect', false)
 
-            console.log(state.user)
+            console.log(state.user) // 当前用户
             return true
         } catch (error) {
             console.log(error)
@@ -40,9 +40,24 @@ export default {
     async changeRoom({commit}, roomId) {
         try {
             const {id, name} = await chatkit.subscribeToRoom(roomId)
-            commit('SetActiveRoom', {id, name})
+            commit('setActiveRoom', {id, name})
         } catch (error) {
             handleError(commit, error)
         }
+    },
+    async sendMessage({commit}, message) {
+        try {
+            commit('setError', '')
+            commit('setSending', true)
+            const messgeId = await chatkit.sendMessage(message)
+            return messgeId
+        } catch (error) {
+            handleError(commit, error)
+        } finally {
+            commit('setSending', false)
+        }
+    },
+    async logout() {
+        chatkit.disconnectUser()
     }
 }
